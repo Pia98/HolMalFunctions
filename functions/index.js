@@ -21,6 +21,6 @@ exports.deleteItemDoneTrue = functions.database.ref('/item/{itemId}')
     its before value: ${before} -
     its after value: ${after}`);
   if((before.done === false) && (after.done === true)){
-    return admin.database.ref('/item/' + itemId).remove();
+    return change.after.ref.update({ timeDone: 1 });
   }else return null;
 })
