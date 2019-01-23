@@ -9,6 +9,7 @@ exports.deleteItemDoneTrue = functions.database.ref('/item/{itemId}')
   const itemId = context.params.itemId;
   const before = change.before.val();
   const after = change.after.val();
+  const belongsToList = after.belongsTo;
   const ref = change.after.ref.parent;
 
   console.log('deleteItemDoneTrue', `ItemID: ${itemId} -
@@ -21,7 +22,7 @@ exports.deleteItemDoneTrue = functions.database.ref('/item/{itemId}')
       snapshot.forEach(function(child){
         console.log('deleteItemDoneTrue', `is child?: ${child.val().done}`);
         var value = child.val();
-        if(value.done === true){
+        if((value.done === true) && (value.belongsTo === belongsToList)){
           console.log('deleteItemDoneTrue', `childs time: ${value.timeDone}`);
           if((value.timeDone +1 ) === 10){
             updates[child.key] = null;
