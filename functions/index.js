@@ -17,10 +17,27 @@ exports.deleteItemDoneTrue = functions.database.ref('/item/{itemId}')
   const itemId = context.params.itemId;
   const before = change.before.val();
   const after = change.after.val();
+  const ref = change.after.ref.parent;
+
   console.log('deleteItemDoneTrue', `ItemID: ${itemId} -
-    its before value: ${before} -
-    its after value: ${after}`);
+    its before value: ${before.done} -
+    its after value: ${after.done} -
+    its time until delete: ${after.timeDone}`);
   if((before.done === false) && (after.done === true)){
-    return change.after.ref.update({ timeDone: 1 });
+    return ref.once("value", function(snapshot){
+      var updates = {};
+      snapshot.forEach(function(child){
+        console.log('deleteItemDoneTrue', `is child done?: ${child.done}`);
+        if(child.done === true){
+          console.log('deleteItemDoneTrue', `childs time: ${child.timeDone}`);
+          if((child.timeDone +1 ) === 10){
+            udates[child.key] = null;
+          }else{
+            updates[child.timeDone] = child.timeDone +1;
+          }
+        }
+      });
+      return ref.update(updates);
+    });
   }else return null;
-})
+});
