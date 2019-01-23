@@ -27,13 +27,14 @@ exports.deleteItemDoneTrue = functions.database.ref('/item/{itemId}')
     return ref.once("value", function(snapshot){
       var updates = {};
       snapshot.forEach(function(child){
-        console.log('deleteItemDoneTrue', `is child done?: ${child.done}`);
-        if(child.done === true){
-          console.log('deleteItemDoneTrue', `childs time: ${child.timeDone}`);
-          if((child.timeDone +1 ) === 10){
-            udates[child.key] = null;
+        console.log('deleteItemDoneTrue', `is child?: ${child.val().done}`);
+        var value = child.val();
+        if(value.done === true){
+          console.log('deleteItemDoneTrue', `childs time: ${value.timeDone}`);
+          if((value.timeDone +1 ) === 10){
+            updates[child.key] = null;
           }else{
-            updates[child.timeDone] = child.timeDone +1;
+            updates[child.key + "/timeDone"] = value.timeDone +1;
           }
         }
       });
