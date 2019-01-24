@@ -33,7 +33,7 @@ exports.deleteItemDoneTrue = functions.database.ref('/item/{itemId}')
       });
       return ref.update(updates);
     });
-  }if else((before.done === true) && (after.done === false)){
+  }else if((before.done === true) && (after.done === false)){
     return change.after.ref.update({ timeDone: 0 });
   }else return null;
 });
