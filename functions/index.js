@@ -4,6 +4,10 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp();
 
+//this function triggers the realtime database
+//it is called if an item is updated
+//the timeDone of each item in the same household gets incremented
+//only 10 done items will be saved
 exports.deleteItemDoneTrue = functions.database.ref('/item/{itemId}')
 .onUpdate((change, context) => {
   const itemId = context.params.itemId;
@@ -24,7 +28,7 @@ exports.deleteItemDoneTrue = functions.database.ref('/item/{itemId}')
         var value = child.val();
         if((value.done === true) && (value.belongsTo === belongsToList)){
           console.log('deleteItemDoneTrue', `childs time: ${value.timeDone}`);
-          if((value.timeDone +1 ) === 10){
+          if((value.timeDone +1 ) > 10){
             updates[child.key] = null;
           }else{
             updates[child.key + "/timeDone"] = value.timeDone +1;
