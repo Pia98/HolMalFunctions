@@ -38,6 +38,20 @@ exports.deleteItemDoneTrue = functions.database.ref('/item/{itemId}')
       return ref.update(updates);
     });
   }else if((before.done === true) && (after.done === false)){
-    return change.after.ref.update({ timeDone: 0 });
+    return ref.once("value", function(snapshot){
+      var updates = {};
+      snapshot.forEach(function(child){
+        console.log('deleteItemDoneTrue', `is child?: ${child.val().done}`);
+        var value = child.val();
+        if(child.key === itemId){
+          updates[child.key + "/timeDone"] = 0;
+        }
+        if((value.done === true) && (value.belongsTo === belongsToList)){
+          console.log('deleteItemDoneTrue', `childs time: ${value.timeDone}`);
+          updates[child.key + "/timeDone"] = value.timeDone -1;
+        }
+      });
+      return ref.update(updates);
+    });
   }else return null;
 });
